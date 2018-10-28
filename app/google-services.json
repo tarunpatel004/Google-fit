@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1043149620687",
+    "firebase_url": "https://udacityfitnessapp.firebaseio.com",
+    "project_id": "udacityfitnessapp",
+    "storage_bucket": "udacityfitnessapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043149620687:android:75c3fda78a9a3db6",
+        "android_client_info": {
+          "package_name": "com.fitness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043149620687-40gge958ufi6mru87klu0cm8hi7qutsm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK5piUHdQiP0yz9Hwnh6xt7IKdsmrofRo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
