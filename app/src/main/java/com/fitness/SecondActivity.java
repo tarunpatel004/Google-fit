@@ -1,5 +1,7 @@
 package com.fitness;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,28 +11,39 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Goal;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.request.DataUpdateRequest;
+import com.google.android.gms.fitness.request.GoalsReadRequest;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class SecondActivity extends AppCompatActivity implements
@@ -42,8 +55,10 @@ public class SecondActivity extends AppCompatActivity implements
     private Button mButtonAddSteps;
     private Button mButtonUpdateSteps;
     private Button mButtonDeleteSteps;
+    private Button mButtonUserInfo;
 
     private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInAccount googleSigninAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,28 +69,77 @@ public class SecondActivity extends AppCompatActivity implements
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Fitness.HISTORY_API)
+                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                .addScope(new Scope(Scopes.PLUS_ME))
+                .addScope(new Scope(Scopes.FITNESS_BODY_READ))
                 .addConnectionCallbacks(this)
                 .enableAutoManage(this, 0, this)
                 .build();
     }
 
+    private void signIn() {
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestProfile()
+                .build();
+
+
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, 107);
+        
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == 107) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            googleSigninAccount = task.getResult();
+            Log.e("onActivityResult",task.toString());
+        }
+    }
+
+
     private void initViews() {
-//        mButtonViewWeek = (Button) findViewById(R.id.btn_view_week);
+        mButtonViewWeek = (Button) findViewById(R.id.btn_view_week);
         mButtonViewToday = (Button) findViewById(R.id.btn_view_today);
-//        mButtonAddSteps = (Button) findViewById(R.id.btn_add_steps);
-//        mButtonUpdateSteps = (Button) findViewById(R.id.btn_update_steps);
-//        mButtonDeleteSteps = (Button) findViewById(R.id.btn_delete_steps);
+        mButtonAddSteps = (Button) findViewById(R.id.btn_add_steps);
+        mButtonUpdateSteps = (Button) findViewById(R.id.btn_update_steps);
+        mButtonDeleteSteps = (Button) findViewById(R.id.btn_delete_steps);
+        mButtonUserInfo = (Button) findViewById(R.id.btn_user_info);
 //
-//        mButtonViewWeek.setOnClickListener(this);
+        mButtonViewWeek.setOnClickListener(this);
         mButtonViewToday.setOnClickListener(this);
-//        mButtonAddSteps.setOnClickListener(this);
-//        mButtonUpdateSteps.setOnClickListener(this);
-//        mButtonDeleteSteps.setOnClickListener(this);
+        mButtonAddSteps.setOnClickListener(this);
+        mButtonUpdateSteps.setOnClickListener(this);
+        mButtonDeleteSteps.setOnClickListener(this);
+        mButtonUserInfo.setOnClickListener(this);
     }
 
     public void onConnected(@Nullable Bundle bundle) {
         Log.e("HistoryAPI", "onConnected");
+
+        /*GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(SecondActivity.this);
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+
+            Log.e("Name ============",personName);
+        }*/
+
+        //this is for getting user information
+        signIn();
     }
 
     //In use, call this every 30 seconds in active mode, 60 in ambient on watch faces
@@ -158,7 +222,7 @@ public class SecondActivity extends AppCompatActivity implements
                 .setType(DataSource.TYPE_RAW)
                 .build();
 
-        int stepCountDelta = 1000000;
+        int stepCountDelta = 100;
         DataSet dataSet = DataSet.create(dataSource);
 
         DataPoint point = dataSet.createDataPoint()
@@ -219,6 +283,51 @@ public class SecondActivity extends AppCompatActivity implements
         Fitness.HistoryApi.deleteData(mGoogleApiClient, request).await(1, TimeUnit.MINUTES);
     }
 
+    private void getUserGoal(){
+
+
+        if(googleSigninAccount == null){
+            return;
+        }
+        Task<List<Goal>> response = Fitness.getGoalsClient(this, googleSigninAccount)
+                .readCurrentGoals(new GoalsReadRequest.Builder()
+                        .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                        .addDataType(DataType.TYPE_DISTANCE_DELTA)
+                        .build());
+
+        try {
+            List<Goal> goals = Tasks.await(response);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getUserWeight(){
+
+        Calendar calendar = Calendar.getInstance();
+        DataReadRequest dataReadRequest = new DataReadRequest.Builder()
+                .read(DataType.TYPE_HEIGHT)
+                .setTimeRange(1, calendar.getTimeInMillis(), TimeUnit.MILLISECONDS)
+                .setLimit(1)
+                .build();
+
+        DataReadResult dataReadResult = Fitness.HistoryApi.readData(mGoogleApiClient, dataReadRequest).await(1, TimeUnit.MINUTES);
+
+        //Used for aggregated data
+        if (dataReadResult.getBuckets().size() > 0) {
+            Log.e("Weight", "Number of buckets: " + dataReadResult.getBuckets().size());
+            for (Bucket bucket : dataReadResult.getBuckets()) {
+                List<DataSet> dataSets = bucket.getDataSets();
+                for (DataSet dataSet : dataSets) {
+                    showDataSet(dataSet);
+                }
+            }
+        }
+
+    }
+
     @Override
     public void onConnectionSuspended(int i) {
         Log.e("HistoryAPI", "onConnectionSuspended");
@@ -253,6 +362,10 @@ public class SecondActivity extends AppCompatActivity implements
                 new DeleteYesterdaysStepsTask().execute();
                 break;
             }
+            case R.id.btn_user_info: {
+                new GetGoal().execute();
+                break;
+            }
         }
     }
 
@@ -266,6 +379,12 @@ public class SecondActivity extends AppCompatActivity implements
     private class ViewTodaysStepCountTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             displayStepDataForToday();
+            return null;
+        }
+    }
+    private class GetGoal extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            getUserGoal();
             return null;
         }
     }
@@ -290,6 +409,12 @@ public class SecondActivity extends AppCompatActivity implements
         protected Void doInBackground(Void... params) {
             deleteStepDataOnGoogleFit();
             displayLastWeeksData();
+            return null;
+        }
+    }
+    private class GetUserWeightAsync extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            getUserWeight();
             return null;
         }
     }

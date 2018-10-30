@@ -34,4 +34,10 @@
         android:layout_height="wrap_content"
         android:text="Delete step data for yesterday" />
 
+    <Button
+        android:id="@+id/btn_user_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get user info" />
+
 </LinearLayout>
