@@ -26,15 +26,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity2 extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 101;
     private static final String LOG_FITNESS = "Fitness";
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_new);
 
         setupLoginWithGoogle();
     }
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
-                        MainActivity.this /* OnConnectionFailedListener */)
+                        MainActivity2.this /* OnConnectionFailedListener */)
                 .addApi(Fitness.HISTORY_API)
                 .build();
 
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     calendar.add(Calendar.DATE, -1);
 
-                    final Task<DataReadResponse> response = Fitness.getHistoryClient(MainActivity.this, lastSigninAcc)
+                    final Task<DataReadResponse> response = Fitness.getHistoryClient(MainActivity2.this, lastSigninAcc)
                             .readData(new DataReadRequest.Builder()
                                     .read(DataType.AGGREGATE_STEP_COUNT_DELTA)
                                     .setTimeRange(calendar.getTimeInMillis(), calendar1.getTimeInMillis(), TimeUnit.MILLISECONDS)
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             });
 
 
-//            MainActivity.this.runOnUiThread(new Runnable() {
+//            MainActivity2.this.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
 //

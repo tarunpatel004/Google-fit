@@ -19,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
@@ -69,7 +70,6 @@ public class SecondActivity extends AppCompatActivity implements
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addScope(new Scope(Scopes.PLUS_ME))
                 .addScope(new Scope(Scopes.FITNESS_BODY_READ))
@@ -89,7 +89,7 @@ public class SecondActivity extends AppCompatActivity implements
 
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, 107);
-        
+
     }
 
     @Override
@@ -102,7 +102,7 @@ public class SecondActivity extends AppCompatActivity implements
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             googleSigninAccount = task.getResult();
-            Log.e("onActivityResult",task.toString());
+            Log.e("onActivityResult", task.toString());
         }
     }
 
@@ -283,10 +283,10 @@ public class SecondActivity extends AppCompatActivity implements
         Fitness.HistoryApi.deleteData(mGoogleApiClient, request).await(1, TimeUnit.MINUTES);
     }
 
-    private void getUserGoal(){
+    private void getUserGoal() {
 
 
-        if(googleSigninAccount == null){
+        if (googleSigninAccount == null) {
             return;
         }
         Task<List<Goal>> response = Fitness.getGoalsClient(this, googleSigninAccount)
@@ -304,7 +304,7 @@ public class SecondActivity extends AppCompatActivity implements
         }
     }
 
-    private void getUserWeight(){
+    private void getUserWeight() {
 
         Calendar calendar = Calendar.getInstance();
         DataReadRequest dataReadRequest = new DataReadRequest.Builder()
@@ -328,6 +328,36 @@ public class SecondActivity extends AppCompatActivity implements
 
     }
 
+    private class FetchCalorieAsync extends AsyncTask<Object, Object, Double> {
+        protected Double doInBackground(Object... params) {
+            double total = 0;
+            PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(mGoogleApiClient, DataType.TYPE_CALORIES_EXPENDED);
+            DailyTotalResult totalResult = result.await(30, TimeUnit.SECONDS);
+            if (totalResult.getStatus().isSuccess()) {
+                DataSet totalSet = totalResult.getTotal();
+                if (totalSet != null) {
+                    total = totalSet.isEmpty()
+                            ? 0
+                            : totalSet.getDataPoints().get(0).getValue(Field.FIELD_CALORIES).asFloat();
+                }
+            } else {
+                Log.w("Calories", "There was a problem getting the calories.");
+            }
+            return total;
+        }
+
+
+        @Override
+        protected void onPostExecute(Double aLong) {
+            super.onPostExecute(aLong);
+
+            //Total calories burned for that day
+            Log.i("Calories", "Total calories: " + aLong);
+
+        }
+    }
+
+
     @Override
     public void onConnectionSuspended(int i) {
         Log.e("HistoryAPI", "onConnectionSuspended");
@@ -341,7 +371,7 @@ public class SecondActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.btn_view_week: {
                 new ViewWeekStepCountTask().execute();
                 break;
@@ -363,7 +393,8 @@ public class SecondActivity extends AppCompatActivity implements
                 break;
             }
             case R.id.btn_user_info: {
-                new GetGoal().execute();
+//                new GetGoal().execute();
+                new FetchCalorieAsync().execute();
                 break;
             }
         }
@@ -382,6 +413,7 @@ public class SecondActivity extends AppCompatActivity implements
             return null;
         }
     }
+
     private class GetGoal extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             getUserGoal();
@@ -412,6 +444,7 @@ public class SecondActivity extends AppCompatActivity implements
             return null;
         }
     }
+
     private class GetUserWeightAsync extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             getUserWeight();
