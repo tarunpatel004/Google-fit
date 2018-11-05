@@ -41,21 +41,11 @@ import java.util.concurrent.TimeUnit;
  * Created by Dell on 11/2/2018.
  */
 
-public class BaseActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
-
-    public GoogleApiClient mGoogleApiClient;
-    public GoogleSignInAccount googleSigninAccount;
+public class BaseActivity extends AppCompatActivity {
 
 
     public static final int GOOGLE_PROFILE_REQ = 107;
 
-    public interface ConnectionSuccess{
-        void onConnection();
-    }
-
-    ConnectionSuccess connectionSuccess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,155 +69,7 @@ public class BaseActivity extends AppCompatActivity implements
         fragmentTransaction.commit();
     }
 
-    public GoogleApiClient initGoogleApiClient(ConnectionSuccess connectionSuccess) {
-        this.connectionSuccess = connectionSuccess;
 
 
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            return mGoogleApiClient;
-        }
 
-        return mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.HISTORY_API)
-                .addApi(Fitness.GOALS_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                .addScope(new Scope(Scopes.PLUS_ME))
-                .addScope(new Scope(Scopes.FITNESS_BODY_READ))
-                .addConnectionCallbacks(this)
-                .enableAutoManage(this, this)
-                .build();
-    }public GoogleApiClient initGoogleApiClient() {
-
-
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            return mGoogleApiClient;
-        }
-
-        return mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.HISTORY_API)
-                .addApi(Fitness.GOALS_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                .addScope(new Scope(Scopes.PLUS_ME))
-                .addScope(new Scope(Scopes.FITNESS_BODY_READ))
-                .addConnectionCallbacks(this)
-                .enableAutoManage(this, this)
-                .build();
-    }
-
-
-    private void signIn() {
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestProfile()
-                .build();
-
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, GOOGLE_PROFILE_REQ);
-
-    }
-
-    public class ViewTodaysStepCountTask extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
-            displayStepDataForToday();
-            return null;
-        }
-    }
-
-    public void displayStepDataForToday() {
-        DailyTotalResult result = Fitness.HistoryApi.readDailyTotal(mGoogleApiClient, DataType.TYPE_STEP_COUNT_DELTA).await(1, TimeUnit.MINUTES);
-        showDataSet(result.getTotal());
-    }
-
-    private void showDataSet(DataSet dataSet) {
-        Log.e("History", "Data returned for Data type: " + dataSet.getDataType().getName());
-        DateFormat dateFormat = DateFormat.getDateInstance();
-        DateFormat timeFormat = DateFormat.getTimeInstance();
-
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            Log.e("History", "Data point:");
-            Log.e("History", "\tType: " + dp.getDataType().getName());
-            Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            for (Field field : dp.getDataType().getFields()) {
-                Log.e("History", "\tField: " + field.getName() +
-                        " Value: " + dp.getValue(field));
-            }
-
-
-        }
-    }
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        Log.d("onConnected", "GoogleAPIClient is now connected for use");
-
-        /**
-         * This is we are calling
-         */
-//        signIn();
-
-        if(connectionSuccess != null){
-            connectionSuccess.onConnection();
-        }
-//        Intent i = new Intent("com.conneced");
-//        sendBroadcast(i);
-
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//        googleSigninAccount = task.getResult();
-
-//        new GetGoal().execute();
-    }
-
-    private class GetGoal extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
-            getUserGoal();
-            return null;
-        }
-    }
-
-
-    private void getUserGoal() {
-
-//        Task<List<Goal>> response = Fitness.getGoalsClient(this, googleSigninAccount)
-//                .readCurrentGoals(new GoalsReadRequest.Builder()
-//                        .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
-//                        .addDataType(DataType.TYPE_DISTANCE_DELTA)
-//                        .build());
-
-        Task<List<Goal>> response = Fitness.getGoalsClient(this, GoogleSignIn.getLastSignedInAccount(this))
-                .readCurrentGoals(
-                        new GoalsReadRequest.Builder()
-                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                                .addDataType(DataType.TYPE_DISTANCE_DELTA)
-                                .build());
-
-        try {
-            List<Goal> goals = Tasks.await(response);
-            Log.e("", "");
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }

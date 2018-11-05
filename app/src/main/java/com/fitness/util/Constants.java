@@ -1,4 +1,4 @@
-package com.fitness;
+package com.fitness.util;
 
 /**
  * Created by Dell on 11/4/2018.

@@ -1,11 +1,12 @@
-package com.fitness;
+package com.fitness.ui;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.fitness.ui.MainActivity;
+import com.fitness.Application;
+import com.fitness.R;
 
 public class SplashActivity extends AppCompatActivity {
 

@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.fitness.Application;
-import com.fitness.Constants;
-import com.fitness.GoogleApiHelper;
+import com.fitness.util.Constants;
+import com.fitness.util.GoogleApiHelper;
 import com.fitness.R;
+import com.fitness.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
@@ -58,6 +60,8 @@ public class SummaryFragment extends Fragment {
     @BindView(R.id.txt_calories)
     TextView txtCalories;
     private Calendar selectedDate;
+    private GoogleApiClient mGoogleAPIClient;
+    private GoogleApiHelper googleAPIHelper;
 
     public SummaryFragment() {
         // Required empty public constructor
@@ -71,7 +75,12 @@ public class SummaryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
         unbinder = ButterKnife.bind(this, view);
 
+        googleAPIHelper = new GoogleApiHelper(getActivity());
+
+        mGoogleAPIClient = googleAPIHelper.getGoogleApiClient();
+
         initCalenderView(view);
+
         ((MainActivity) getActivity()).showMenu(false);
         getActivity().setTitle("Summary");
 
@@ -93,31 +102,14 @@ public class SummaryFragment extends Fragment {
                 .datesNumberOnScreen(5)
                 .build();
 
-        Application.getGoogleApiHelper().setConnectionListener(new GoogleApiHelper.ConnectionListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-            }
-
-            @Override
-            public void onConnectionSuspended(int i) {
-
-            }
-
-            @Override
-            public void onConnected(Bundle bundle) {
-                new FetchCalorieForTodayAsync().execute();
-                new ViewTodaysStepCountTask().execute();
-            }
-
-        });
+        getStepsAndCaloriesForToday();
 
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Calendar date, int position) {
 
                 selectedDate = date;
-                checkClient();
+                checkClientNGetData();
             }
 
             @Override
@@ -134,30 +126,67 @@ public class SummaryFragment extends Fragment {
 
     }
 
-    private void checkClient() {
-        Application.getGoogleApiHelper().setConnectionListener(new GoogleApiHelper.ConnectionListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    /**
+     * This method is used for call method of today's steps
+     */
+    private void getStepsAndCaloriesForToday() {
 
-            }
+        if(googleAPIHelper.isConnected()){
+            new FetchCalorieForTodayAsync().execute();
+            new FetchStepsForTodayAsync().execute();
+        }else{
+            googleAPIHelper.setConnectionListener(new GoogleApiHelper.ConnectionListener() {
+                @Override
+                public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-            @Override
-            public void onConnectionSuspended(int i) {
+                }
 
-            }
+                @Override
+                public void onConnectionSuspended(int i) {
 
-            @Override
-            public void onConnected(Bundle bundle) {
-                new ViewSelectedDateData().execute();
-            }
+                }
 
-        });
+                @Override
+                public void onConnected(Bundle bundle) {
+                    new FetchCalorieForTodayAsync().execute();
+                    new FetchStepsForTodayAsync().execute();
+                }
+            });
+        }
+
+    }
+
+    private void checkClientNGetData() {
+
+        if(googleAPIHelper.isConnected()){
+            new ViewSelectedDateData().execute();
+        }else {
+
+            googleAPIHelper.setConnectionListener(new GoogleApiHelper.ConnectionListener() {
+                @Override
+                public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+
+                }
+
+                @Override
+                public void onConnected(Bundle bundle) {
+                    new ViewSelectedDateData().execute();
+                }
+
+            });
+        }
     }
 
     private class ViewSelectedDateData extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
+
             displayStepDataForSelectedDay();
-            displayCalories();
+            displayCaloriesDataForSelectedDay();
 
             return null;
         }
@@ -166,13 +195,19 @@ public class SummaryFragment extends Fragment {
     //In use, call this every 30 seconds in active mode, 60 in ambient on watch faces
     private void displayStepDataForSelectedDay() {
 
+      Log.e("selected date,",  selectedDate.getTime().toString());
+
         Calendar cal = selectedDate;
+
 //        Date now = new Date();
 //        cal.setTime(now);
 //        cal.add(Calendar.DAY_OF_YEAR, -1);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
         long startTime = cal.getTimeInMillis();
+        cal.add(Calendar.HOUR_OF_DAY, 23);
+        cal.add(Calendar.MINUTE, 59);
+        cal.add(Calendar.SECOND, 59);
+        long endTime = cal.getTimeInMillis();
+
 
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
@@ -181,7 +216,7 @@ public class SummaryFragment extends Fragment {
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .build();
 
-        DataReadResult dataReadResult = Fitness.HistoryApi.readData(Application.getGoogleApiHelper().getGoogleApiClient(), readRequest).await(1, TimeUnit.MINUTES);
+        DataReadResult dataReadResult = Fitness.HistoryApi.readData(mGoogleAPIClient, readRequest).await(1, TimeUnit.MINUTES);
 
         //Used for aggregated data
         if (dataReadResult.getBuckets().size() > 0) {
@@ -190,20 +225,25 @@ public class SummaryFragment extends Fragment {
                 List<DataSet> dataSets = bucket.getDataSets();
                 for (DataSet dataSet : dataSets) {
                     showDataSetForSteps(dataSet);
+
+
                 }
             }
         }
     }
 
-    private void displayCalories() {
+
+    private void displayCaloriesDataForSelectedDay() {
 
         Calendar cal = selectedDate;
 //        Date now = new Date();
 //        cal.setTime(now);
 //        cal.add(Calendar.DAY_OF_YEAR, -1);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
         long startTime = cal.getTimeInMillis();
+        cal.add(Calendar.HOUR_OF_DAY, 23);
+        cal.add(Calendar.MINUTE, 59);
+        cal.add(Calendar.SECOND, 59);
+        long endTime = cal.getTimeInMillis();
 
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
@@ -212,7 +252,7 @@ public class SummaryFragment extends Fragment {
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .build();
 
-        DataReadResult dataReadResult = Fitness.HistoryApi.readData(Application.getGoogleApiHelper().getGoogleApiClient(), readRequest).await(1, TimeUnit.MINUTES);
+        DataReadResult dataReadResult = Fitness.HistoryApi.readData(mGoogleAPIClient, readRequest).await(1, TimeUnit.MINUTES);
 
         //Used for aggregated data
         if (dataReadResult.getBuckets().size() > 0) {
@@ -288,10 +328,13 @@ public class SummaryFragment extends Fragment {
         unbinder.unbind();
     }
 
+    /***
+     * Fetch calories for today only
+     */
     private class FetchCalorieForTodayAsync extends AsyncTask<Object, Object, Double> {
         protected Double doInBackground(Object... params) {
             double total = 0;
-            PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(Application.getGoogleApiHelper().getGoogleApiClient(), DataType.TYPE_CALORIES_EXPENDED);
+            PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(mGoogleAPIClient, DataType.TYPE_CALORIES_EXPENDED);
             DailyTotalResult totalResult = result.await(30, TimeUnit.SECONDS);
             if (totalResult.getStatus().isSuccess()) {
                 final DataSet totalSet = totalResult.getTotal();
@@ -319,39 +362,37 @@ public class SummaryFragment extends Fragment {
 
     }
 
-    private class ViewTodaysStepCountTask extends AsyncTask<Void, Void, Void> {
+
+    /**
+     * Fetch steps for today only
+     */
+    private class FetchStepsForTodayAsync extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
-            displayStepDataForToday();
+            DailyTotalResult result = Fitness.HistoryApi.readDailyTotal(mGoogleAPIClient, DataType.TYPE_STEP_COUNT_DELTA).await(1, TimeUnit.MINUTES);
+
+
+            DataSet dataSet = result.getTotal();
+            for (final DataPoint dp : dataSet.getDataPoints()) {
+                Log.e("History", "Data point:");
+                Log.e("History", "\tType: " + dp.getDataType().getName());
+                for (final Field field : dp.getDataType().getFields()) {
+                    Log.e("History", "\tField: " + field.getName() +
+                            " Value: " + dp.getValue(field));
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressSteps.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_steps)));
+                            progressSteps.setProgressWithAnimation(dp.getValue(field).asInt());
+
+                            txtSteps.setText(dp.getValue(field).asInt() + "");
+                        }
+                    });
+
+                }
+            }
             return null;
         }
     }
-
-    //In use, call this every 30 seconds in active mode, 60 in ambient on watch faces
-    private void displayStepDataForToday() {
-        DailyTotalResult result = Fitness.HistoryApi.readDailyTotal(Application.getGoogleApiHelper().getGoogleApiClient(), DataType.TYPE_STEP_COUNT_DELTA).await(1, TimeUnit.MINUTES);
-
-
-        DataSet dataSet = result.getTotal();
-        for (final DataPoint dp : dataSet.getDataPoints()) {
-            Log.e("History", "Data point:");
-            Log.e("History", "\tType: " + dp.getDataType().getName());
-            for (final Field field : dp.getDataType().getFields()) {
-                Log.e("History", "\tField: " + field.getName() +
-                        " Value: " + dp.getValue(field));
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressSteps.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_steps)));
-                        progressSteps.setProgressWithAnimation(dp.getValue(field).asInt());
-
-                        txtSteps.setText(dp.getValue(field).asInt() + "");
-                    }
-                });
-
-            }
-        }
-    }
-
 
 }

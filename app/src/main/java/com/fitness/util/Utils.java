@@ -1,4 +1,4 @@
-package com.fitness;
+package com.fitness.util;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -18,19 +18,18 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.fitness.Application;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -572,6 +571,42 @@ public class Utils {
         return Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
     }
+
+    public static long getStartingMilliOftheDay(Calendar selectedDate) {
+
+        Calendar c = selectedDate;
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        long millis = (System.currentTimeMillis() - c.getTimeInMillis());
+
+        Log.e("Starting Millis",millis+"==========");
+        return millis;
+
+    }
+
+
+    public static long getEndingMilliOftheDay(Calendar selectedDate) {
+
+
+        Calendar c = selectedDate;
+
+        c.set(Calendar.MILLISECOND, 999);
+
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        long millis = (System.currentTimeMillis() - c.getTimeInMillis());
+        Log.e("Ending Millis",millis+"==========");
+
+        return millis;
+
+    }
+
+
+
+
 
 //    public static float getStepsPercentage(int i) {
 //

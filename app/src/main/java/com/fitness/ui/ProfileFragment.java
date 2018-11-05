@@ -1,11 +1,9 @@
 package com.fitness.ui;
 
 
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,11 +15,10 @@ import android.widget.TextView;
 
 import com.fitness.Application;
 import com.fitness.BaseActivity;
-import com.fitness.Constants;
-import com.fitness.GoogleApiHelper;
+import com.fitness.util.Constants;
+import com.fitness.util.GoogleApiHelper;
 import com.fitness.R;
-import com.fitness.Utils;
-import com.google.android.gms.common.ConnectionResult;
+import com.fitness.util.Utils;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -80,23 +77,10 @@ public class ProfileFragment extends Fragment {
         getActivity().setTitle("Profile");
 
         setValues();
-        Application.getGoogleApiHelper().setConnectionListener(new GoogleApiHelper.ConnectionListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-            }
+        mGoogleApiClient = new GoogleApiHelper(getActivity()).getGoogleApiClient();
 
-            @Override
-            public void onConnectionSuspended(int i) {
-
-            }
-
-            @Override
-            public void onConnected(Bundle bundle) {
-                new GetUserWeightAsync().execute();
-            }
-
-        });
+        new GetUserWeightAsync().execute();
 
 
         if (Application.getPrefranceData(Constants.max_calories).isEmpty() || Application.getPrefranceData(Constants.max_steps).isEmpty()) {
@@ -151,8 +135,10 @@ public class ProfileFragment extends Fragment {
         Application.setPreferences(Constants.max_steps, edtSteps.getText().toString());
         Application.setPreferences(Constants.max_calories, edtCalories.getText().toString());
 
+
         ((BaseActivity) getActivity()).replaceFragment(new DailyStepsFragment(), R.id.main_frame_layout);
     }
+
 
     private class GetUserWeightAsync extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
@@ -164,7 +150,12 @@ public class ProfileFragment extends Fragment {
 
     private void getUserWeight() {
 
-        mGoogleApiClient = ((BaseActivity) getActivity()).mGoogleApiClient;
+//        mGoogleApiClient = ((BaseActivity) getActivity()).mGoogleApiClient;
+
+        if(mGoogleApiClient == null){
+            Log.e("APICLient","was null ====");
+            return;
+        }
 
         Calendar calendar = Calendar.getInstance();
         DataReadRequest dataReadRequest = new DataReadRequest.Builder()
@@ -193,7 +184,7 @@ public class ProfileFragment extends Fragment {
 
     private void getUserHeight() {
 
-        mGoogleApiClient = ((BaseActivity) getActivity()).mGoogleApiClient;
+//        mGoogleApiClient = ((BaseActivity) getActivity()).mGoogleApiClient;
 
         Calendar calendar = Calendar.getInstance();
         DataReadRequest dataReadRequest = new DataReadRequest.Builder()

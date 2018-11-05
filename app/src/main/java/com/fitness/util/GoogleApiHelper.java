@@ -1,8 +1,9 @@
-package com.fitness;
+package com.fitness.util;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +39,8 @@ public class GoogleApiHelper implements GoogleApiClient.ConnectionCallbacks, Goo
     public void connect() {
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
+            Log.e("Connect","Connect API client");
+
         }
     }
 
@@ -51,20 +54,37 @@ public class GoogleApiHelper implements GoogleApiClient.ConnectionCallbacks, Goo
         return mGoogleApiClient != null && mGoogleApiClient.isConnected();
     }
 
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(Fitness.HISTORY_API)
-                .addApi(Fitness.GOALS_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                .addScope(new Scope(Scopes.PLUS_ME))
-                .addScope(new Scope(Scopes.FITNESS_BODY_READ))
-                .addConnectionCallbacks(this)
-                .build();
+    public void buildGoogleApiClient() {
+        try {
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(Fitness.HISTORY_API)
+                    .addApi(Fitness.GOALS_API)
+                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                    .addScope(new Scope(Scopes.PLUS_ME))
+                    .addScope(new Scope(Scopes.FITNESS_BODY_READ))
+                    .enableAutoManage((AppCompatActivity)context,this)
+                    .addConnectionCallbacks(this)
+                    .build();
+        }catch (Exception ex){
 
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(Fitness.HISTORY_API)
+                    .addApi(Fitness.GOALS_API)
+                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                    .addScope(new Scope(Scopes.PLUS_ME))
+                    .addScope(new Scope(Scopes.FITNESS_BODY_READ))
+                    .addConnectionCallbacks(this)
+                    .build();
+
+        }
+
+
+        Log.e("Build","Build API client");
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.e("Connected","API Connected");
         connectionBundle = bundle;
         if (connectionListener != null) {
             connectionListener.onConnected(bundle);
