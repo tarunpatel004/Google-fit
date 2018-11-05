@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.fitness.ui.MainActivity;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

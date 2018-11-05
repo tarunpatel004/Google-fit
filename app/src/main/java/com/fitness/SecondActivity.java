@@ -72,6 +72,7 @@ public class SecondActivity extends AppCompatActivity implements
                 .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addScope(new Scope(Scopes.PLUS_ME))
+                .addApi(Fitness.GOALS_API)
                 .addScope(new Scope(Scopes.FITNESS_BODY_READ))
                 .addConnectionCallbacks(this)
                 .enableAutoManage(this, 0, this)
@@ -103,6 +104,8 @@ public class SecondActivity extends AppCompatActivity implements
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             googleSigninAccount = task.getResult();
             Log.e("onActivityResult", task.toString());
+
+            new GetGoal().execute();
         }
     }
 
@@ -297,10 +300,13 @@ public class SecondActivity extends AppCompatActivity implements
 
         try {
             List<Goal> goals = Tasks.await(response);
+            Log.e("UserGoal", goals.toString());
         } catch (ExecutionException e) {
             e.printStackTrace();
+            Log.e("UserGoal","erro");
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Log.e("UserGoal","error");
         }
     }
 
@@ -308,7 +314,7 @@ public class SecondActivity extends AppCompatActivity implements
 
         Calendar calendar = Calendar.getInstance();
         DataReadRequest dataReadRequest = new DataReadRequest.Builder()
-                .read(DataType.TYPE_HEIGHT)
+                .read(DataType.TYPE_WEIGHT)
                 .setTimeRange(1, calendar.getTimeInMillis(), TimeUnit.MILLISECONDS)
                 .setLimit(1)
                 .build();
@@ -393,8 +399,8 @@ public class SecondActivity extends AppCompatActivity implements
                 break;
             }
             case R.id.btn_user_info: {
-//                new GetGoal().execute();
-                new FetchCalorieAsync().execute();
+                new GetGoal().execute();
+//                new FetchCalorieAsync().execute();
                 break;
             }
         }

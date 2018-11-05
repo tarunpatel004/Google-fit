@@ -27,6 +27,7 @@ public class Application extends android.app.Application {
     //DatabaseHelper Object
     // GSOn
     private CookieManager cookieManager;
+    private GoogleApiHelper googleApiHelper;
 
     public static Application get() {
         return _instance;
@@ -154,6 +155,17 @@ public class Application extends android.app.Application {
         _instance = this;
         _preferences = PreferenceManager.getDefaultSharedPreferences(this);
         setUpFonts();
+
+        googleApiHelper = new GoogleApiHelper(this);
+
+    }
+
+    public GoogleApiHelper getGoogleApiHelperInstance() {
+        return this.googleApiHelper;
+    }
+
+    public static GoogleApiHelper getGoogleApiHelper() {
+        return get().getGoogleApiHelperInstance();
     }
 
     /**

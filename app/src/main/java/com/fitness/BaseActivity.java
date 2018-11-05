@@ -6,6 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,9 +26,15 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Goal;
+import com.google.android.gms.fitness.request.GoalsReadRequest;
 import com.google.android.gms.fitness.result.DailyTotalResult;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 import java.text.DateFormat;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,30 +46,74 @@ public class BaseActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     public GoogleApiClient mGoogleApiClient;
-    private GoogleSignInAccount googleSigninAccount;
+    public GoogleSignInAccount googleSigninAccount;
+
+
+    public static final int GOOGLE_PROFILE_REQ = 107;
+
+    public interface ConnectionSuccess{
+        void onConnection();
+    }
+
+    ConnectionSuccess connectionSuccess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        initGoogleApiClient();
+
     }
 
-    public void initGoogleApiClient() {
+    public void replaceFragment(Fragment fr, int id) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(id, fr);
+
+//        if (fr instanceof MainFragment){
+//            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+//                fm.popBackStack();
+//            }
+//        }else {
+//            fragmentTransaction.addToBackStack("abc");
+//        }
+        fragmentTransaction.commit();
+    }
+
+    public GoogleApiClient initGoogleApiClient(ConnectionSuccess connectionSuccess) {
+        this.connectionSuccess = connectionSuccess;
+
 
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.stopAutoManage(this);
-            mGoogleApiClient.disconnect();
+            return mGoogleApiClient;
         }
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+
+        return mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Fitness.HISTORY_API)
+                .addApi(Fitness.GOALS_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addScope(new Scope(Scopes.PLUS_ME))
                 .addScope(new Scope(Scopes.FITNESS_BODY_READ))
                 .addConnectionCallbacks(this)
-                .enableAutoManage(this, 0, this)
+                .enableAutoManage(this, this)
+                .build();
+    }public GoogleApiClient initGoogleApiClient() {
+
+
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            return mGoogleApiClient;
+        }
+
+        return mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Fitness.HISTORY_API)
+                .addApi(Fitness.GOALS_API)
+                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                .addScope(new Scope(Scopes.PLUS_ME))
+                .addScope(new Scope(Scopes.FITNESS_BODY_READ))
+                .addConnectionCallbacks(this)
+                .enableAutoManage(this, this)
                 .build();
     }
+
 
     private void signIn() {
 
@@ -70,10 +123,8 @@ public class BaseActivity extends AppCompatActivity implements
 
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        new ViewTodaysStepCountTask().execute();
-
-//        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-//        startActivityForResult(signInIntent, 107);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, GOOGLE_PROFILE_REQ);
 
     }
 
@@ -103,6 +154,8 @@ public class BaseActivity extends AppCompatActivity implements
                 Log.e("History", "\tField: " + field.getName() +
                         " Value: " + dp.getValue(field));
             }
+
+
         }
     }
 
@@ -112,7 +165,17 @@ public class BaseActivity extends AppCompatActivity implements
 
         Log.d("onConnected", "GoogleAPIClient is now connected for use");
 
-        signIn();
+        /**
+         * This is we are calling
+         */
+//        signIn();
+
+        if(connectionSuccess != null){
+            connectionSuccess.onConnection();
+        }
+//        Intent i = new Intent("com.conneced");
+//        sendBroadcast(i);
+
 
     }
 
@@ -124,5 +187,47 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+//        googleSigninAccount = task.getResult();
+
+//        new GetGoal().execute();
+    }
+
+    private class GetGoal extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            getUserGoal();
+            return null;
+        }
+    }
+
+
+    private void getUserGoal() {
+
+//        Task<List<Goal>> response = Fitness.getGoalsClient(this, googleSigninAccount)
+//                .readCurrentGoals(new GoalsReadRequest.Builder()
+//                        .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+//                        .addDataType(DataType.TYPE_DISTANCE_DELTA)
+//                        .build());
+
+        Task<List<Goal>> response = Fitness.getGoalsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                .readCurrentGoals(
+                        new GoalsReadRequest.Builder()
+                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                                .addDataType(DataType.TYPE_DISTANCE_DELTA)
+                                .build());
+
+        try {
+            List<Goal> goals = Tasks.await(response);
+            Log.e("", "");
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
