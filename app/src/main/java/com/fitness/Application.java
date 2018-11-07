@@ -8,8 +8,9 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.WindowManager;
+
+import com.fitness.util.GoogleApiHelper;
 
 import java.lang.reflect.Field;
 import java.net.CookieManager;
@@ -210,7 +211,7 @@ public class Application extends android.app.Application {
     private void setUpFonts() {
         try {
             CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                    .setDefaultFontPath("fontawesome.ttf")
+                    .setDefaultFontPath("Raleway-Regular.ttf")
                     .setFontAttrId(R.attr.fontPath)
                     .build());
         } catch (Exception ex) {

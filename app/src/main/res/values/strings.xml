@@ -10,7 +10,7 @@
     <string name="summary">Summary</string>
     <string name="setting">Setting</string>
     <string name="logout">Logout</string>
-    <string name="connect">Connect</string>
+    <string name="connect">Log In</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -26,5 +26,13 @@
     <string name="max_steps">max steps per day</string>
     <string name="max_calories">Max calories per day</string>
     <string name="share">Share</string>
+    <string name="profile">Profile</string>
+    <string name="error_max_steps_calories">Please add max steps you want to run and max calories you want to burn in a day</string>
+    <string name="error_max_steps_blank">Targeted number of steps per day can\'t be zero.</string>
+    <string name="error_max_calories_blank">Targeted calories burnt per day can\'t be zero.</string>
+    <string name="error_fetch_profile">Something went wrong while fetching profile, Please try again</string>
+    <string name="msg_storage_permission">Sorry, We reqired this permission to share your data.</string>
+    <string name="today">Today</string>
+    <string name="inch">Feet</string>
 
 </resources>

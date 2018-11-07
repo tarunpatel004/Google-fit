@@ -3,7 +3,6 @@ package com.fitness.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,10 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fitness.Application;
-import com.fitness.Constants;
-import com.fitness.GoogleApiHelper;
+import com.fitness.util.Constants;
+import com.fitness.util.GoogleApiHelper;
 import com.fitness.R;
-import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -50,6 +49,7 @@ public class DailyStepsFragment extends Fragment {
     TextView txtCalories;
     @BindView(R.id.ll_main)
     public LinearLayout llMain;
+    private GoogleApiClient mGoogleAPIClient;
 
     public DailyStepsFragment() {
         // Required empty public constructor
@@ -63,28 +63,15 @@ public class DailyStepsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_daily_steps, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        Application.getGoogleApiHelper().setConnectionListener(new GoogleApiHelper.ConnectionListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mGoogleAPIClient = new GoogleApiHelper(getActivity()).getGoogleApiClient();
 
-            }
+        new ViewTodaysStepCountTask().execute();
+        new FetchCalorieAsync().execute();
 
-            @Override
-            public void onConnectionSuspended(int i) {
-
-            }
-
-            @Override
-            public void onConnected(Bundle bundle) {
-                new ViewTodaysStepCountTask().execute();
-                new FetchCalorieAsync().execute();
-            }
-
-        });
 
         ((MainActivity) getActivity()).showMenu(true);
 
-        getActivity().setTitle("Today");
+        getActivity().setTitle(getResources().getString(R.string.today));
         return view;
     }
 
@@ -105,7 +92,7 @@ public class DailyStepsFragment extends Fragment {
 
     //In use, call this every 30 seconds in active mode, 60 in ambient on watch faces
     private void displayStepDataForToday() {
-        DailyTotalResult result = Fitness.HistoryApi.readDailyTotal(Application.getGoogleApiHelper().getGoogleApiClient(), DataType.TYPE_STEP_COUNT_DELTA).await(1, TimeUnit.MINUTES);
+        DailyTotalResult result = Fitness.HistoryApi.readDailyTotal(mGoogleAPIClient, DataType.TYPE_STEP_COUNT_DELTA).await(1, TimeUnit.MINUTES);
         showDataSet(result.getTotal());
     }
 
@@ -140,7 +127,7 @@ public class DailyStepsFragment extends Fragment {
     private class FetchCalorieAsync extends AsyncTask<Object, Object, Double> {
         protected Double doInBackground(Object... params) {
             double total = 0;
-            PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(Application.getGoogleApiHelper().getGoogleApiClient(), DataType.TYPE_CALORIES_EXPENDED);
+            PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(mGoogleAPIClient, DataType.TYPE_CALORIES_EXPENDED);
             DailyTotalResult totalResult = result.await(30, TimeUnit.SECONDS);
             if (totalResult.getStatus().isSuccess()) {
                 final DataSet totalSet = totalResult.getTotal();
@@ -166,15 +153,6 @@ public class DailyStepsFragment extends Fragment {
             return total;
         }
 
-
-        @Override
-        protected void onPostExecute(Double aLong) {
-            super.onPostExecute(aLong);
-
-            //Total calories burned for that day
-            Log.i("Calories", "Total calories: " + aLong);
-
-        }
     }
 
 }

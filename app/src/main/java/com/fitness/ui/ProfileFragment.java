@@ -1,11 +1,9 @@
 package com.fitness.ui;
 
 
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,22 +15,18 @@ import android.widget.TextView;
 
 import com.fitness.Application;
 import com.fitness.BaseActivity;
-import com.fitness.Constants;
-import com.fitness.GoogleApiHelper;
 import com.fitness.R;
-import com.fitness.Utils;
-import com.google.android.gms.common.ConnectionResult;
+import com.fitness.util.Constants;
+import com.fitness.util.GoogleApiHelper;
+import com.fitness.util.Utils;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
@@ -77,42 +71,35 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        getActivity().setTitle("Profile");
+        getActivity().setTitle(getResources().getString(R.string.profile));
 
         setValues();
-        Application.getGoogleApiHelper().setConnectionListener(new GoogleApiHelper.ConnectionListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        checkFromMainActivity();
 
-            }
+        mGoogleApiClient = new GoogleApiHelper(getActivity()).getGoogleApiClient();
+        new GetUserWeightAsync().execute();
 
-            @Override
-            public void onConnectionSuspended(int i) {
+        ((MainActivity) getActivity()).showMenu(false);
 
-            }
+        return view;
+    }
 
-            @Override
-            public void onConnected(Bundle bundle) {
-                new GetUserWeightAsync().execute();
-            }
-
-        });
-
-
+    /**
+     * This function check that if this fragment called from main activity for the first time,
+     * If yes then it will ask for your target calories and target steps
+     */
+    private void checkFromMainActivity() {
         if (Application.getPrefranceData(Constants.max_calories).isEmpty() || Application.getPrefranceData(Constants.max_steps).isEmpty()) {
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Utils.showAlertDialog((BaseActivity) getActivity(), "Alert", "Please add max steps you want to run and max calories you want to burn in a day");
+                    Utils.showAlertDialog((BaseActivity) getActivity(), "Alert", getResources().getString(R.string.error_max_steps_calories));
 
                 }
             }, 500);
 
         }
-
-        ((MainActivity)getActivity()).showMenu(false);
-        return view;
     }
 
     private void setValues() {
@@ -134,16 +121,16 @@ public class ProfileFragment extends Fragment {
     @OnClick(R.id.btn_save)
     public void onClick() {
         if (edtCalories.getText().toString().isEmpty() || edtSteps.getText().toString().isEmpty()) {
-            Utils.showAlertToast(getActivity(), "Targeted number of steps per day and Max calorie you want to burn is required");
+            Utils.showAlertToast(getActivity(), getResources().getString(R.string.error_max_steps_calories));
             return;
         }
 
         if (Integer.parseInt(edtSteps.getText().toString()) == 0) {
-            Utils.showAlertToast(getActivity(), "Targeted number of steps per day can't be zero.");
+            Utils.showAlertToast(getActivity(), getResources().getString(R.string.error_max_steps_blank));
             edtSteps.requestFocus();
             return;
         } else if (Integer.parseInt(edtCalories.getText().toString()) == 0) {
-            Utils.showAlertToast(getActivity(), "Targeted calories burnt per day can't be zero.");
+            Utils.showAlertToast(getActivity(), getResources().getString(R.string.error_max_calories_blank));
             edtCalories.requestFocus();
             return;
         }
@@ -151,8 +138,10 @@ public class ProfileFragment extends Fragment {
         Application.setPreferences(Constants.max_steps, edtSteps.getText().toString());
         Application.setPreferences(Constants.max_calories, edtCalories.getText().toString());
 
+
         ((BaseActivity) getActivity()).replaceFragment(new DailyStepsFragment(), R.id.main_frame_layout);
     }
+
 
     private class GetUserWeightAsync extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
@@ -163,8 +152,10 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getUserWeight() {
-
-        mGoogleApiClient = ((BaseActivity) getActivity()).mGoogleApiClient;
+        if (mGoogleApiClient == null) {
+            Log.e("APICLient", "was null ====");
+            return;
+        }
 
         Calendar calendar = Calendar.getInstance();
         DataReadRequest dataReadRequest = new DataReadRequest.Builder()
@@ -192,9 +183,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getUserHeight() {
-
-        mGoogleApiClient = ((BaseActivity) getActivity()).mGoogleApiClient;
-
         Calendar calendar = Calendar.getInstance();
         DataReadRequest dataReadRequest = new DataReadRequest.Builder()
                 .read(DataType.TYPE_HEIGHT)
@@ -212,30 +200,14 @@ public class ProfileFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    txtHeight.setText(height + "");
-                    Application.setPreferences(Constants.height, height + "");
+
+                    Log.e("Height", height + "====");
+                    txtHeight.setText(Utils.getHeightinCm(height) + "");
+                    Application.setPreferences(Constants.height, Utils.getHeightinCm(height) + "");
 
                 }
             });
         }
 
     }
-
-    private void showDataSet(DataSet dataSet) {
-        Log.e("History", "Data returned for Data type: " + dataSet.getDataType().getName());
-        DateFormat dateFormat = DateFormat.getDateInstance();
-        DateFormat timeFormat = DateFormat.getTimeInstance();
-
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            Log.e("History", "Data point:");
-            Log.e("History", "\tType: " + dp.getDataType().getName());
-            Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            for (Field field : dp.getDataType().getFields()) {
-                Log.e("History", "\tField: " + field.getName() +
-                        " Value: " + dp.getValue(field));
-            }
-        }
-    }
-
 }

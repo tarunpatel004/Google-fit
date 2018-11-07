@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="MissingPrefix">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/ll_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_16sdp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="@dimen/_210sdp"
+                android:layout_height="@dimen/_210sdp"
+
+                android:layout_gravity="center_horizontal">
+
+                <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                    android:id="@+id/progress_steps"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cpb_background_progressbar_color="@color/colorPrimary"
+                    app:cpb_background_progressbar_width="10dp"
+                    app:cpb_progressbar_color="@color/colorPrimaryDark"
+                    app:cpb_progressbar_width="15dp" />
+
+
+                <TextView
+                    android:id="@+id/txt_steps"
+                    fontPath="Raleway-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="0"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/_32sdp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_steps"
+                    android:layout_centerInParent="true"
+                    android:text="@string/Steps"
+                    android:textSize="@dimen/default_text_size" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="@dimen/_160sdp"
+                android:layout_height="@dimen/_160sdp"
+                android:layout_gravity="center_horizontal"
+
+                android:layout_marginTop="@dimen/_16sdp">
+
+                <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                    android:id="@+id/progress_calories"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+
+                    app:cpb_background_progressbar_color="@color/colorPrimary"
+                    app:cpb_background_progressbar_width="8dp"
+                    app:cpb_progressbar_color="@color/colorPrimaryDark"
+                    app:cpb_progressbar_width="12dp" />
+
+                <TextView
+                    android:id="@+id/txt_calories"
+                    fontPath="Raleway-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="0"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/_32sdp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_calories"
+                    android:layout_centerInParent="true"
+                    android:text="@string/Calories"
+
+                    android:textSize="@dimen/default_text_size" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
