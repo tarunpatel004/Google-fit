@@ -136,13 +136,14 @@ public class DailyStepsFragment extends Fragment {
                             ? 0
                             : totalSet.getDataPoints().get(0).getValue(Field.FIELD_CALORIES).asFloat();
 
+                    final double finalTotal = total;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progressCalories.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_calories)));
-                            progressCalories.setProgressWithAnimation(totalSet.getDataPoints().get(0).getValue(Field.FIELD_CALORIES).asFloat());
+                            progressCalories.setProgressWithAnimation((float) finalTotal);
 
-                            txtCalories.setText((int) totalSet.getDataPoints().get(0).getValue(Field.FIELD_CALORIES).asFloat() + "");
+                            txtCalories.setText((int) finalTotal + "");
                         }
                     });
 

@@ -113,7 +113,8 @@ public class MainActivity extends BaseActivity
         TextView userName = (TextView) navView.getHeaderView(0).findViewById(R.id.txt_user_name);
 
         userName.setText(Application.getPrefranceData(Constants.name));
-        Picasso.get().load(Application.getPrefranceData(Constants.img)).into(userImage);
+        if (!Application.getPrefranceData(Constants.img).isEmpty())
+            Picasso.get().load(Application.getPrefranceData(Constants.img)).into(userImage);
 
         navView.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
             @Override

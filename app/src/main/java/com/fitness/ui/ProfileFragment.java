@@ -104,7 +104,8 @@ public class ProfileFragment extends Fragment {
 
     private void setValues() {
         txtName.setText(Application.getPrefranceData(Constants.name));
-        Picasso.get().load(Application.getPrefranceData(Constants.img)).into(imgUser);
+        if (!Application.getPrefranceData(Constants.img).isEmpty())
+            Picasso.get().load(Application.getPrefranceData(Constants.img)).into(imgUser);
         edtCalories.setText(Application.getPrefranceData(Constants.max_calories));
         edtSteps.setText(Application.getPrefranceData(Constants.max_steps));
         txtHeight.setText(Application.getPrefranceData(Constants.height));
@@ -168,17 +169,23 @@ public class ProfileFragment extends Fragment {
 
         //Used for aggregated data
 
-        if (dataReadResult.getDataSets() != null && dataReadResult.getDataSets().size() > 0) {
-            final float weight = dataReadResult.getDataSets().get(0).getDataPoints().get(0).getValue(Field.FIELD_WEIGHT).asFloat();
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    txtWeight.setText(weight + "");
-                    Application.setPreferences(Constants.weight, weight + "");
-                }
-            });
+        try {
+            if (dataReadResult.getDataSets() != null && dataReadResult.getDataSets().size() > 0) {
+                final float weight = dataReadResult.getDataSets().get(0).getDataPoints().get(0).getValue(Field.FIELD_WEIGHT).asFloat();
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtWeight.setText(weight + "");
+                        Application.setPreferences(Constants.weight, weight + "");
+                    }
+                });
+            }
+        } catch (Exception ex) {
+            Application.setPreferences(Constants.weight, "");
         }
+
 
     }
 
@@ -194,19 +201,24 @@ public class ProfileFragment extends Fragment {
 
         //Used for aggregated data
 
-        if (dataReadResult.getDataSets() != null && dataReadResult.getDataSets().size() > 0) {
-            final float height = dataReadResult.getDataSets().get(0).getDataPoints().get(0).getValue(Field.FIELD_HEIGHT).asFloat();
+        try {
+            if (dataReadResult.getDataSets() != null && dataReadResult.getDataSets().size() > 0) {
+                final float height = dataReadResult.getDataSets().get(0).getDataPoints().get(0).getValue(Field.FIELD_HEIGHT).asFloat();
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    Log.e("Height", height + "====");
-                    txtHeight.setText(Utils.getHeightinCm(height) + "");
-                    Application.setPreferences(Constants.height, Utils.getHeightinCm(height) + "");
+                        Log.e("Height", height + "====");
+                        txtHeight.setText(Utils.getHeightinCm(height) + "");
+                        Application.setPreferences(Constants.height, Utils.getHeightinCm(height) + "");
 
-                }
-            });
+                    }
+                });
+            }
+
+        } catch (Exception ex) {
+            Application.setPreferences(Constants.height, "");
         }
 
     }

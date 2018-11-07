@@ -124,7 +124,8 @@ public class LoginActivity extends BaseActivity {
 
             if (task != null) {
                 Application.setPreferences(Constants.name, task.getResult().getDisplayName());
-                Application.setPreferences(Constants.img, task.getResult().getPhotoUrl().toString());
+                if (task.getResult().getPhotoUrl() != null)
+                    Application.setPreferences(Constants.img, task.getResult().getPhotoUrl().toString());
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
 
