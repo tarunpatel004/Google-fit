@@ -30,6 +30,19 @@
             android:label="@string/title_activity_main"></activity>
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".BaseActivity" />
+
+        <receiver
+            android:name=".widget.MyWidgetProvider"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.upstack.solution.forecastweather.widget.8BITCLOCK_WIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
     </application>
 
 </manifest>

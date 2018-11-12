@@ -224,12 +224,19 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+
+        if (id == R.id.nav_logout) {
+            logout();
+        } else if (Application.getPrefranceData(Constants.max_calories).isEmpty() || Application.getPrefranceData(Constants.max_steps).isEmpty()) {
+            Utils.showAlertDialog(MainActivity.this, "Alert", getResources().getString(R.string.error_max_steps_calories));
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return false;
+        }
+
         if (id == R.id.nav_summary) {
             replaceFragment(new SummaryFragment(), R.id.main_frame_layout);
         } else if (id == R.id.nav_setting) {
             replaceFragment(new ProfileFragment(), R.id.main_frame_layout);
-        } else if (id == R.id.nav_logout) {
-            logout();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
