@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -15,7 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.fitness.Application;
 import com.fitness.R;
+import com.fitness.ui.MainActivity;
+import com.fitness.util.Constants;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -70,9 +74,15 @@ public class MyWidgetProvider extends AppWidgetProvider {
                 remoteViews = new RemoteViews(context.getPackageName(),
                         R.layout.widget_layout);
 
-                remoteViews.setViewVisibility(R.id.widget_refresh_pb, View.VISIBLE);
+                //Update the views according to values
+                remoteViews.setTextViewText(R.id.txt_steps, Application.getPrefranceData(Constants.TodaySteps));
+                remoteViews.setTextViewText(R.id.txt_calories, Application.getPrefranceData(Constants.TodayCalories));
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.setData(Uri.parse(WIDGET_UPDATE));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                remoteViews.setOnClickPendingIntent(R.id.open_app_click, pendingIntent);
+                appWidgetManager.updateAppWidget(widgetId, remoteViews);
 
-//            saveLocation();
 
             }
         } catch (Exception ex) {
@@ -80,21 +90,6 @@ public class MyWidgetProvider extends AppWidgetProvider {
         }
     }
 
-
-    public static String formatTimeWithDayIfNotToday(Context context, long timeInMillis) {
-        Calendar now = Calendar.getInstance();
-        Calendar lastCheckedCal = new GregorianCalendar();
-        lastCheckedCal.setTimeInMillis(timeInMillis);
-        Date lastCheckedDate = new Date(timeInMillis);
-        String timeFormat = android.text.format.DateFormat.getTimeFormat(context).format(lastCheckedDate);
-        if (now.get(Calendar.YEAR) == lastCheckedCal.get(Calendar.YEAR) &&
-                now.get(Calendar.DAY_OF_YEAR) == lastCheckedCal.get(Calendar.DAY_OF_YEAR)) {
-            // Same day, only show time
-            return timeFormat;
-        } else {
-            return android.text.format.DateFormat.getDateFormat(context).format(lastCheckedDate) + " " + timeFormat;
-        }
-    }
 
     @Override
     public void onDisabled(Context context) {

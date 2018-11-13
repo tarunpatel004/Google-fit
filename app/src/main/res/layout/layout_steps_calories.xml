@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="0"
+                    android:text="@string/zero"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="@dimen/_32sdp"
                     android:textStyle="bold" />
@@ -67,8 +67,11 @@
                     android:id="@+id/progress_calories"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_alignParentLeft="true"
 
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="center_horizontal"
                     app:cpb_background_progressbar_color="@color/colorPrimary"
                     app:cpb_background_progressbar_width="8dp"
                     app:cpb_progressbar_color="@color/colorPrimaryDark"
@@ -80,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="0"
+                    android:text="@string/zero"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="@dimen/_32sdp"
                     android:textStyle="bold" />

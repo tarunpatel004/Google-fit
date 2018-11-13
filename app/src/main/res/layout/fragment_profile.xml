@@ -391,34 +391,23 @@
                     </android.support.v7.widget.CardView>
                 </FrameLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+
+                <TextView
+                    android:id="@+id/btn_save"
+                    fontPath="Raleway-Bold.ttf"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:layout_below="@id/frame"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_minus39sdp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/btn_save"
-                        fontPath="Raleway-Bold.ttf"
-                        android:layout_width="@dimen/_90sdp"
-                        android:layout_height="@dimen/_30sdp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/shape_save_btn"
-                        android:fontFamily="sans-serif-condensed"
-                        android:gravity="center"
-                        android:text="@string/save"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/default_text_size"
-                        android:textStyle="bold" />
-
-
-                </LinearLayout>
+                    android:background="@drawable/shape_save_btn"
+                    android:gravity="center"
+                    android:text="@string/save"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/default_text_size"
+                    android:textStyle="bold" />
 
 
             </RelativeLayout>
@@ -437,9 +426,10 @@
                     android:layout_width="@dimen/_85sdp"
                     android:layout_height="@dimen/_85sdp"
                     android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="@null"
+                    android:contentDescription="@string/content_user_image"
                     android:src="@drawable/logo_fit"
                     app:civ_border_color="#ffffff"
                     app:civ_border_width="1dp">

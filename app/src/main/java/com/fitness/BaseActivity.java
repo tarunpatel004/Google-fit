@@ -46,15 +46,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class BaseActivity extends AppCompatActivity {
 
-
-    public static final int GOOGLE_PROFILE_REQ = 107;
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     public void replaceFragment(Fragment fr, int id) {
@@ -62,13 +56,6 @@ public class BaseActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(id, fr);
 
-//        if (fr instanceof MainFragment){
-//            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-//                fm.popBackStack();
-//            }
-//        }else {
-//            fragmentTransaction.addToBackStack("abc");
-//        }
         fragmentTransaction.commit();
     }
 

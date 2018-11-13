@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.fitness.Application;
 import com.fitness.R;
+import com.fitness.util.Constants;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -19,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (Application.getPrefranceBoolean("isLoggedIn")) {
+                if (Application.getPrefranceBoolean(Constants.isLoggedIn)) {
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 } else {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));

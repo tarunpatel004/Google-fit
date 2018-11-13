@@ -65,14 +65,17 @@ public class DailyStepsFragment extends Fragment {
 
         mGoogleAPIClient = new GoogleApiHelper(getActivity()).getGoogleApiClient();
 
-        new ViewTodaysStepCountTask().execute();
-        new FetchCalorieAsync().execute();
-
+        getData();
 
         ((MainActivity) getActivity()).showMenu(true);
 
         getActivity().setTitle(getResources().getString(R.string.today));
         return view;
+    }
+
+    public void getData() {
+        new ViewTodaysStepCountTask().execute();
+        new FetchCalorieAsync().execute();
     }
 
 
@@ -117,6 +120,9 @@ public class DailyStepsFragment extends Fragment {
                         progressSteps.setProgressWithAnimation(dp.getValue(field).asInt());
 
                         txtSteps.setText(dp.getValue(field).asInt() + "");
+
+                        Application.setPreferences(Constants.TodaySteps, dp.getValue(field).asInt() + "");
+                        ((MainActivity) getActivity()).updateWidget();
                     }
                 });
 
@@ -144,6 +150,9 @@ public class DailyStepsFragment extends Fragment {
                             progressCalories.setProgressWithAnimation((float) finalTotal);
 
                             txtCalories.setText((int) finalTotal + "");
+
+                            Application.setPreferences(Constants.TodayCalories, (int) finalTotal + "");
+                            ((MainActivity) getActivity()).updateWidget();
                         }
                     });
 

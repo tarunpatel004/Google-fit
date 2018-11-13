@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fitness.Application;
+import com.fitness.R;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
@@ -111,7 +112,7 @@ public class Utils {
             builder.setMessage(text)
                     .setTitle(title)
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             //do things
                         }
@@ -201,7 +202,7 @@ public class Utils {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "tmp", null);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, Constants.ImageName, null);
         return Uri.parse(path);
 
     }

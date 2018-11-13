@@ -15,6 +15,7 @@
         android:layout_width="@dimen/_70sdp"
         android:layout_height="@dimen/_70sdp"
         android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/content_user_image"
         android:src="@drawable/logo_fit"
         app:civ_border_color="#ffffff"
         app:civ_border_width="1dp">
@@ -32,7 +33,6 @@
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:maxLines="1"
-        android:text="asfdasf"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="@dimen/_16sdp" />
 

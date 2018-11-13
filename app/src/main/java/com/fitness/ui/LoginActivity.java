@@ -28,14 +28,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.fitness.BaseActivity.GOOGLE_PROFILE_REQ;
-
 public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.img)
     ImageView img;
     private String TAG = LoginActivity.class.getSimpleName();
-    private GoogleApiClient mGoogleApiClient;
+    public static final int GOOGLE_PROFILE_REQ = 107;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,12 +41,11 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        //Load gif for rotate image
         Ion.with(img)
                 .error(R.drawable.logo_fit)
                 .animateGif(AnimateGifMode.ANIMATE)
                 .load("file:///android_asset/logo_fit.gif");
-
-
     }
 
     @OnClick(R.id.btn_login)
@@ -83,19 +80,17 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    @Override
+   /* @Override
     protected void onPause() {
         super.onPause();
-
         Application.getGoogleApiHelper().disconnect();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         Application.getGoogleApiHelper().connect();
-    }
+    }*/
 
     private void signIntoPlus() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -116,7 +111,7 @@ public class LoginActivity extends BaseActivity {
 
 
         if (requestCode == GOOGLE_PROFILE_REQ && resultCode == Activity.RESULT_OK) {
-            Application.setPreferencesBoolean("isLoggedIn", true);
+            Application.setPreferencesBoolean(Constants.isLoggedIn, true);
 
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 

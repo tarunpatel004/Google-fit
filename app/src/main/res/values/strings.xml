@@ -34,5 +34,13 @@
     <string name="msg_storage_permission">Sorry, We reqired this permission to share your data.</string>
     <string name="today">Today</string>
     <string name="inch">Feet</string>
+    <string name="refresh">Refresh</string>
+    <string name="ok">OK</string>
+    <string name="content_login_image">Login Image</string>
+    <string name="content_splash_image">Splash Image</string>
+    <string name="zero">0</string>
+    <string name="content_user_image">User Image</string>
+    <string name="checkout_str">Checkout my today\'s steps and calories</string>
+    <string name="share_msg">Share today\'s activity ...</string>
 
 </resources>

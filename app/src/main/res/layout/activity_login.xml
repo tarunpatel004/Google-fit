@@ -10,6 +10,7 @@
     <ImageView
         android:id="@+id/img"
         android:layout_width="wrap_content"
+        android:contentDescription="@string/content_login_image"
         android:layout_height="@dimen/_240sdp"
         android:layout_centerInParent="true"
         android:src="@drawable/logo_fit" />
