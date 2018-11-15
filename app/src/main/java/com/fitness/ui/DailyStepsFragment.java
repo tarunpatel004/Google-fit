@@ -74,8 +74,8 @@ public class DailyStepsFragment extends Fragment {
     }
 
     public void getData() {
-        new ViewTodaysStepCountTask().execute();
-        new FetchCalorieAsync().execute();
+        new ViewTodaysStepCountTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new FetchCalorieAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 
@@ -85,7 +85,6 @@ public class DailyStepsFragment extends Fragment {
         unbinder.unbind();
     }
 
-
     private class ViewTodaysStepCountTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             displayStepDataForToday();
@@ -93,7 +92,6 @@ public class DailyStepsFragment extends Fragment {
         }
     }
 
-    //In use, call this every 30 seconds in active mode, 60 in ambient on watch faces
     private void displayStepDataForToday() {
         DailyTotalResult result = Fitness.HistoryApi.readDailyTotal(mGoogleAPIClient, DataType.TYPE_STEP_COUNT_DELTA).await(1, TimeUnit.MINUTES);
         showDataSet(result.getTotal());
@@ -101,14 +99,7 @@ public class DailyStepsFragment extends Fragment {
 
     private void showDataSet(DataSet dataSet) {
         Log.e("History", "Data returned for Data type: " + dataSet.getDataType().getName());
-        DateFormat dateFormat = DateFormat.getDateInstance();
-        DateFormat timeFormat = DateFormat.getTimeInstance();
-
         for (final DataPoint dp : dataSet.getDataPoints()) {
-            Log.e("History", "Data point:");
-            Log.e("History", "\tType: " + dp.getDataType().getName());
-            Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
             for (final Field field : dp.getDataType().getFields()) {
                 Log.e("History", "\tField: " + field.getName() +
                         " Value: " + dp.getValue(field));
@@ -132,6 +123,7 @@ public class DailyStepsFragment extends Fragment {
 
     private class FetchCalorieAsync extends AsyncTask<Object, Object, Double> {
         protected Double doInBackground(Object... params) {
+            displayStepDataForToday();
             double total = 0;
             PendingResult<DailyTotalResult> result = Fitness.HistoryApi.readDailyTotal(mGoogleAPIClient, DataType.TYPE_CALORIES_EXPENDED);
             DailyTotalResult totalResult = result.await(30, TimeUnit.SECONDS);

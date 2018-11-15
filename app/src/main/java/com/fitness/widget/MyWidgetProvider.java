@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 import com.fitness.Application;
 import com.fitness.R;
 import com.fitness.ui.MainActivity;
+import com.fitness.ui.SplashActivity;
 import com.fitness.util.Constants;
 
 import java.util.Calendar;
@@ -75,9 +76,11 @@ public class MyWidgetProvider extends AppWidgetProvider {
                         R.layout.widget_layout);
 
                 //Update the views according to values
-                remoteViews.setTextViewText(R.id.txt_steps, Application.getPrefranceData(Constants.TodaySteps));
-                remoteViews.setTextViewText(R.id.txt_calories, Application.getPrefranceData(Constants.TodayCalories));
-                Intent intent = new Intent(context, MainActivity.class);
+                remoteViews.setTextViewText(R.id.txt_steps, Application.getPrefranceData(Constants.TodaySteps).isEmpty() ? "0" : Application.getPrefranceData(Constants.TodaySteps));
+                remoteViews.setTextViewText(R.id.txt_calories, Application.getPrefranceData(Constants.TodayCalories).isEmpty() ? "0" : Application.getPrefranceData(Constants.TodayCalories));
+
+               //set click event
+                Intent intent = new Intent(context, SplashActivity.class);
                 intent.setData(Uri.parse(WIDGET_UPDATE));
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
                 remoteViews.setOnClickPendingIntent(R.id.open_app_click, pendingIntent);

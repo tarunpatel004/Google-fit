@@ -136,8 +136,8 @@ public class SummaryFragment extends Fragment {
     private void getStepsAndCaloriesForToday() {
 
         if (googleAPIHelper.isConnected()) {
-            new FetchCalorieForTodayAsync().execute();
-            new FetchStepsForTodayAsync().execute();
+            new FetchCalorieForTodayAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new FetchStepsForTodayAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             googleAPIHelper.setConnectionListener(new GoogleApiHelper.ConnectionListener() {
                 @Override
@@ -152,8 +152,8 @@ public class SummaryFragment extends Fragment {
 
                 @Override
                 public void onConnected(Bundle bundle) {
-                    new FetchCalorieForTodayAsync().execute();
-                    new FetchStepsForTodayAsync().execute();
+                    new FetchCalorieForTodayAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    new FetchStepsForTodayAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             });
         }
@@ -163,7 +163,7 @@ public class SummaryFragment extends Fragment {
     private void checkClientNGetData() {
 
         if (googleAPIHelper.isConnected()) {
-            new ViewSelectedDateData().execute();
+            new ViewSelectedDateData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
 
             googleAPIHelper.setConnectionListener(new GoogleApiHelper.ConnectionListener() {
@@ -179,7 +179,7 @@ public class SummaryFragment extends Fragment {
 
                 @Override
                 public void onConnected(Bundle bundle) {
-                    new ViewSelectedDateData().execute();
+                    new ViewSelectedDateData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
 
             });
@@ -242,7 +242,7 @@ public class SummaryFragment extends Fragment {
                 @Override
                 public void run() {
 
-                    progressSteps.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_calories)));
+                    progressSteps.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_steps)));
                     progressSteps.setProgressWithAnimation(finalTotal);
 
                     txtSteps.setText(finalTotal + "");
@@ -254,7 +254,7 @@ public class SummaryFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    progressSteps.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_calories)));
+                    progressSteps.setProgressMax(Float.parseFloat(Application.getPrefranceData(Constants.max_steps)));
                     progressSteps.setProgressWithAnimation(0);
 
                     txtSteps.setText(0 + "");

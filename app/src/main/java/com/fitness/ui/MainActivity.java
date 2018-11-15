@@ -1,10 +1,14 @@
 package com.fitness.ui;
 
 import android.Manifest;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +30,7 @@ import com.fitness.util.Constants;
 import com.fitness.util.GoogleApiHelper;
 import com.fitness.R;
 import com.fitness.util.Utils;
+import com.fitness.widget.JobSchedulerService;
 import com.fitness.widget.MyWidgetProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -65,6 +70,30 @@ public class MainActivity extends BaseActivity
         setUpNavigationDrawer();
         setUpHeaderView();
 
+        startJobSchedular();
+    }
+
+    /**
+     * This function start job schedular for periodic update the widget
+     * Currently it will refresh widget after every 15 minutes
+     */
+    private void startJobSchedular() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            JobScheduler mJobScheduler = (JobScheduler)
+                    getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = null;
+
+            builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            JobSchedulerService.class.getName()));
+
+            builder.setPeriodic(Constants.WidgetRefreshTime);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+
+            if (mJobScheduler.schedule(builder.build()) == JobScheduler.RESULT_FAILURE) {
+                Log.e("JobSchedual", "onCreate: Some error while scheduling the job");
+            }
+        }
     }
 
     /**
@@ -84,8 +113,6 @@ public class MainActivity extends BaseActivity
     public void updateWidget() {
         Intent intent = new Intent(this, MyWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-// Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-// since it seems the onUpdate() is only fired on that:
         int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), MyWidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         sendBroadcast(intent);
@@ -103,11 +130,21 @@ public class MainActivity extends BaseActivity
         navView.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                replaceFragment(new DailyStepsFragment(), R.id.main_frame_layout);
+                checkGoalsAndReplaceFragment();
                 drawerLayout.closeDrawer(GravityCompat.START);
+
+                deselectNavItems();
 
             }
         });
+    }
+
+    private void deselectNavItems() {
+        int size = navView.getMenu().size();
+        for (int i = 0; i < size; i++) {
+            navView.getMenu().getItem(i).setChecked(false);
+        }
+
     }
 
 
@@ -241,7 +278,10 @@ public class MainActivity extends BaseActivity
                         mGoogleApiClientH.disconnect();
                         mGoogleApiClientH = null;
 
+                        cancelJobSchedular();
+
                         Application.clearSharedPreferences();
+                        updateWidget();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();
                     }
@@ -258,6 +298,12 @@ public class MainActivity extends BaseActivity
 
             }
         });
+
+    }
+
+    private void cancelJobSchedular() {
+        JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancelAll();
 
     }
 }

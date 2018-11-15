@@ -77,7 +77,7 @@ public class ProfileFragment extends Fragment {
         checkFromMainActivity();
 
         mGoogleApiClient = new GoogleApiHelper(getActivity()).getGoogleApiClient();
-        new GetUserWeightAsync().execute();
+        new GetUserWeightAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         ((MainActivity) getActivity()).showMenu(false);
 

@@ -12,4 +12,5 @@ public class Constants {
     public static String isLoggedIn = "isLoggedIn";
 
     public static String ImageName = "tmpImage";
+    public static long WidgetRefreshTime = 900000;//15 minutes
 }
