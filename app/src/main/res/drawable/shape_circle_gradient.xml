@@ -6,10 +6,10 @@
         android:angle="90"
         android:centerColor="@color/colorPrimary"
         android:endColor="@color/colorPrimary"
-        android:startColor="@color/colorPrimaryDark"></gradient>
+        android:startColor="@color/colorPrimaryDark"/>
 
     <stroke
         android:width="1dp"
-        android:color="@color/white"></stroke>
+        android:color="@color/white"/>
 
 </shape>

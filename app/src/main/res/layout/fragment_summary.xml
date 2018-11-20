@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.fitness.ui.SummaryFragment">
+    tools:context="com.fitnessapp.ui.SummaryFragment">
 
     <devs.mulham.horizontalcalendar.HorizontalCalendarView
         android:id="@+id/calendarView"
@@ -13,7 +13,7 @@
         android:background="@color/colorPrimary"
         app:textColorSelected="#FFFF" />
 
-    <include layout="@layout/layout_steps_calories"></include>
+    <include layout="@layout/layout_steps_calories"/>
 
 
 </LinearLayout>

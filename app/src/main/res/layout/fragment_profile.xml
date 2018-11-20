@@ -14,11 +14,13 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/_8sdp"
             android:paddingRight="@dimen/_8sdp"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingStart="@dimen/_8sdp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -60,12 +62,14 @@
                                     app:cardBackgroundColor="@color/white"
                                     app:cardCornerRadius="1dp"
                                     card_view:cardElevation="2dp"
-                                    card_view:cardUseCompatPadding="true">
+                                    card_view:cardUseCompatPadding="true"
+                                    android:layout_marginEnd="@dimen/_8sdp"
+                                    android:layout_marginStart="@dimen/_8sdp">
 
                                     <View
                                         android:layout_width="2dp"
                                         android:layout_height="match_parent"
-                                        android:background="@color/colorPrimaryDark"></View>
+                                        android:background="@color/colorPrimaryDark"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -87,7 +91,8 @@
                                             android:gravity="center_vertical"
                                             android:text="@string/name"
                                             android:textColor="@color/dark_gray"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:layout_marginStart="@dimen/_6sdp" />
 
                                         <TextView
                                             android:id="@+id/txt_name"
@@ -100,7 +105,8 @@
                                             android:maxLength="16"
                                             android:paddingLeft="@dimen/_8sdp"
                                             android:textColor="@color/black"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:paddingStart="@dimen/_8sdp" />
                                     </LinearLayout>
                                 </android.support.v7.widget.CardView>
 
@@ -115,12 +121,14 @@
                                     app:cardBackgroundColor="@color/white"
                                     app:cardCornerRadius="1dp"
                                     card_view:cardElevation="2dp"
-                                    card_view:cardUseCompatPadding="true">
+                                    card_view:cardUseCompatPadding="true"
+                                    android:layout_marginEnd="@dimen/_8sdp"
+                                    android:layout_marginStart="@dimen/_8sdp">
 
                                     <View
                                         android:layout_width="2dp"
                                         android:layout_height="match_parent"
-                                        android:background="@color/colorPrimaryDark"></View>
+                                        android:background="@color/colorPrimaryDark"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -143,7 +151,8 @@
                                             android:gravity="center_vertical"
                                             android:text="@string/height"
                                             android:textColor="@color/dark_gray"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:layout_marginStart="@dimen/_6sdp" />
 
                                         <LinearLayout
                                             android:layout_width="0px"
@@ -161,7 +170,8 @@
                                                 android:gravity="center_vertical"
                                                 android:paddingLeft="@dimen/_8sdp"
                                                 android:textColor="@color/black"
-                                                android:textSize="@dimen/default_text_size" />
+                                                android:textSize="@dimen/default_text_size"
+                                                android:paddingStart="@dimen/_8sdp" />
 
                                             <TextView
                                                 android:layout_width="0px"
@@ -172,7 +182,8 @@
                                                 android:gravity="center_vertical"
                                                 android:text="@string/cm"
                                                 android:textColor="@color/dark_gray"
-                                                android:textSize="@dimen/default_text_size" />
+                                                android:textSize="@dimen/default_text_size"
+                                                android:layout_marginStart="5dp" />
 
                                         </LinearLayout>
 
@@ -190,12 +201,14 @@
                                     app:cardBackgroundColor="@color/white"
                                     app:cardCornerRadius="1dp"
                                     card_view:cardElevation="2dp"
-                                    card_view:cardUseCompatPadding="true">
+                                    card_view:cardUseCompatPadding="true"
+                                    android:layout_marginStart="@dimen/_8sdp"
+                                    android:layout_marginEnd="@dimen/_8sdp">
 
                                     <View
                                         android:layout_width="2dp"
                                         android:layout_height="match_parent"
-                                        android:background="@color/colorPrimaryDark"></View>
+                                        android:background="@color/colorPrimaryDark"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -218,7 +231,8 @@
                                             android:gravity="center_vertical"
                                             android:text="@string/weight"
                                             android:textColor="@color/dark_gray"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:layout_marginStart="@dimen/_6sdp" />
 
                                         <LinearLayout
                                             android:layout_width="0px"
@@ -237,7 +251,8 @@
                                                 android:gravity="center_vertical"
                                                 android:paddingLeft="@dimen/_8sdp"
                                                 android:textColor="@color/black"
-                                                android:textSize="@dimen/default_text_size" />
+                                                android:textSize="@dimen/default_text_size"
+                                                android:paddingStart="@dimen/_8sdp" />
 
                                             <TextView
                                                 android:layout_width="0px"
@@ -248,7 +263,8 @@
                                                 android:gravity="center_vertical"
                                                 android:text="@string/kg"
                                                 android:textColor="@color/dark_gray"
-                                                android:textSize="@dimen/default_text_size" />
+                                                android:textSize="@dimen/default_text_size"
+                                                android:layout_marginStart="5dp" />
 
                                         </LinearLayout>
 
@@ -267,12 +283,14 @@
 
                                     app:cardCornerRadius="1dp"
                                     card_view:cardElevation="2dp"
-                                    card_view:cardUseCompatPadding="true">
+                                    card_view:cardUseCompatPadding="true"
+                                    android:layout_marginStart="@dimen/_8sdp"
+                                    android:layout_marginEnd="@dimen/_8sdp">
 
                                     <View
                                         android:layout_width="2dp"
                                         android:layout_height="match_parent"
-                                        android:background="@color/colorPrimaryDark"></View>
+                                        android:background="@color/colorPrimaryDark"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -295,7 +313,8 @@
                                             android:text="@string/Steps"
 
                                             android:textColor="@color/dark_gray"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:layout_marginStart="@dimen/_6sdp" />
 
 
                                         <EditText
@@ -313,7 +332,9 @@
                                             android:paddingLeft="@dimen/_8sdp"
                                             android:paddingRight="10dp"
                                             android:textColor="@color/black"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:paddingStart="@dimen/_8sdp"
+                                            android:paddingEnd="10dp" />
 
 
                                     </LinearLayout>
@@ -331,12 +352,14 @@
 
                                     app:cardCornerRadius="1dp"
                                     card_view:cardElevation="2dp"
-                                    card_view:cardUseCompatPadding="true">
+                                    card_view:cardUseCompatPadding="true"
+                                    android:layout_marginStart="@dimen/_8sdp"
+                                    android:layout_marginEnd="@dimen/_8sdp">
 
                                     <View
                                         android:layout_width="2dp"
                                         android:layout_height="match_parent"
-                                        android:background="@color/colorPrimaryDark"></View>
+                                        android:background="@color/colorPrimaryDark"/>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -359,7 +382,8 @@
                                             android:text="@string/Calories"
 
                                             android:textColor="@color/dark_gray"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:layout_marginStart="@dimen/_6sdp" />
 
 
                                         <EditText
@@ -377,7 +401,9 @@
                                             android:paddingLeft="@dimen/_8sdp"
                                             android:paddingRight="10dp"
                                             android:textColor="@color/black"
-                                            android:textSize="@dimen/default_text_size" />
+                                            android:textSize="@dimen/default_text_size"
+                                            android:paddingStart="@dimen/_8sdp"
+                                            android:paddingEnd="10dp" />
 
 
                                     </LinearLayout>

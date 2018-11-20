@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources >
     <item name="ic_menu_summary" type="drawable">@drawable/ic_menu_summary</item>
     <item name="ic_menu_setting" type="drawable">@drawable/ic_menu_setting</item>
     <item name="ic_menu_logout" type="drawable">@drawable/ic_menu_logout</item>

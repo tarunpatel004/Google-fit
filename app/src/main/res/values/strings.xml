@@ -31,7 +31,7 @@
     <string name="error_max_steps_blank">Targeted number of steps per day can\'t be zero.</string>
     <string name="error_max_calories_blank">Targeted calories burnt per day can\'t be zero.</string>
     <string name="error_fetch_profile">Something went wrong while fetching profile, Please try again</string>
-    <string name="msg_storage_permission">Sorry, We reqired this permission to share your data.</string>
+    <string name="msg_storage_permission">Sorry, We required this permission to share your data.</string>
     <string name="today">Today</string>
     <string name="inch">Feet</string>
     <string name="refresh">Refresh</string>
@@ -41,6 +41,12 @@
     <string name="zero">0</string>
     <string name="content_user_image">User Image</string>
     <string name="checkout_str">Checkout my today\'s steps and calories</string>
-    <string name="share_msg">Share today\'s activity ...</string>
+    <string name="share_msg">Share today\'s activity</string>
+    <string name="res">estimated_steps</string>
+    <string name="package_name">com.google.android.gms</string>
+    <string name="get_res">com.google.step_count.delta</string>
+    <string name="logo_path">file:///android_asset/logo_fit.gif</string>
+    <string name="default_value">0</string>
+    <string name="alert">Alert</string>
 
 </resources>
