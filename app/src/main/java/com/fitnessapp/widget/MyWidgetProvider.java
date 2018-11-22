@@ -4,30 +4,23 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.arch.persistence.room.Room;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.RemoteViews;
-
-import com.fitnessapp.Application;
 import com.fitnessapp.R;
 import com.fitnessapp.database.DailyActivity;
 import com.fitnessapp.database.DatabaseHelper;
 import com.fitnessapp.ui.SplashActivity;
-import com.fitnessapp.util.Constants;
 import com.fitnessapp.util.Utils;
 
 
 public class MyWidgetProvider extends AppWidgetProvider {
 
     private static final String WIDGET_UPDATE = "com.fitnessapp.widget.UPDATE";
-
-    private static DatabaseHelper databaseHelper;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -61,7 +54,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
                 RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                         R.layout.widget_layout);
 
-                databaseHelper = DatabaseHelper.getInstance(context);
+                DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context);
 
                 DailyActivity dailyActivity = databaseHelper.myDao().getTodayRecord(Utils.getTodayDate());
                 //Update the views according to values

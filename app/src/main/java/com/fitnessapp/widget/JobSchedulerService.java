@@ -3,7 +3,6 @@ package com.fitnessapp.widget;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.appwidget.AppWidgetManager;
-import android.arch.lifecycle.Observer;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,17 +10,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.fitnessapp.Application;
 import com.fitnessapp.database.DailyActivity;
-import com.fitnessapp.database.DailyActivityViewModel;
 import com.fitnessapp.database.DatabaseHelper;
-import com.fitnessapp.ui.DailyStepsFragment;
-import com.fitnessapp.ui.MainActivity;
-import com.fitnessapp.util.Constants;
 import com.fitnessapp.util.GoogleApiHelper;
 import com.fitnessapp.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
@@ -34,8 +27,6 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,7 +39,6 @@ public class JobSchedulerService extends JobService {
     private GoogleApiClient mGoogleAPIClient;
 
     private int steps = 0;
-    private int calories = 0;
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
@@ -127,7 +117,7 @@ public class JobSchedulerService extends JobService {
                         : totalSet.getDataPoints().get(0).getValue(Field.FIELD_CALORIES).asFloat();
 
 
-                calories = (int) total;
+                int calories = (int) total;
 
                 new InsertDBTask(this, new DailyActivity(Utils.getTodayDate(), String.valueOf(steps), String.valueOf(calories))).execute();
 

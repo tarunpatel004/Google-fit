@@ -9,10 +9,10 @@ public class Constants {
     public static final String max_steps = "max_steps";
     public static final String isLoggedIn = "isLoggedIn";
 
-    public static final String ImageName = "tmpImage";
+    static final String ImageName = "tmpImage";
     public static final long WidgetRefreshTime = 900000;//15 minutes
-    public static String DB_NAME = "MyDatabase";
+    public static final String DB_NAME = "MyDatabase";
     public static final String TABLE_NAME_DAILYACTIVITY = "dailyactivity";
 
-    public static String date_format = "yyyy-MM-dd";
+    static final String date_format = "yyyy-MM-dd";
 }

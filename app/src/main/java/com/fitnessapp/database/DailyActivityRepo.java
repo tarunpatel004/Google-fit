@@ -8,7 +8,7 @@ import com.fitnessapp.Application;
  * Created by Dell on 11/19/2018.
  */
 
-public class DailyActivityRepo {
+class DailyActivityRepo {
 
 
     private final LiveData<DailyActivity> liveData;

@@ -1,5 +1,6 @@
 package com.fitnessapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Created by Dell on 11/2/2018.
  */
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     @Override

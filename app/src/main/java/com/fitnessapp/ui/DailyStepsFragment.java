@@ -60,9 +60,7 @@ public class DailyStepsFragment extends Fragment {
     int todayCalories = 0;
     int todaySteps = 0;
 
-    public DailyStepsFragment() {
-        // Required empty public constructor
-    }
+
 
 
     @Override

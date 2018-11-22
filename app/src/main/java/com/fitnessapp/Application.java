@@ -1,22 +1,10 @@
 package com.fitnessapp;
 
 
-import android.app.Dialog;
-import android.arch.persistence.room.Room;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
-import android.view.WindowManager;
 
-import com.fitnessapp.database.DatabaseHelper;
 import com.fitnessapp.util.GoogleApiHelper;
-
-import java.lang.reflect.Field;
-import java.net.CookieManager;
-import java.util.Map;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 

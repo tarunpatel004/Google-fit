@@ -1,19 +1,16 @@
 <resources>
     <string name="app_name">StayFit</string>
-    <string name="server_client_id">1043149620687-uqtolq9522qpedu5irs3c74ot5d155ve.apps.googleusercontent.com</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
     <string name="summary">Summary</string>
     <string name="setting">Setting</string>
     <string name="logout">Logout</string>
     <string name="connect">Log In</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="birthday">Birthday</string>
     <string name="name">Name</string>
     <string name="height">Height</string>

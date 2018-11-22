@@ -2,7 +2,6 @@ package com.fitnessapp.database;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 
 /**
@@ -10,8 +9,8 @@ import android.util.Log;
  */
 
 public class InsertDBTask extends AsyncTask<Void, Void, Boolean> {
-    Context context;
-    public DailyActivity dailyActivity;
+    private Context context;
+    private DailyActivity dailyActivity;
 
     public InsertDBTask(Context context, DailyActivity dailyActivity) {
         this.context = context;
